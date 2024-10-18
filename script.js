@@ -388,8 +388,8 @@ function mainCharacter() {
 
 
     let fitChar = {
-        x: MatchCharPosition()[0] + 130,
-        y: MatchCharPosition()[1] + 300
+        x: MatchCharPosition()[0] + 100,
+        y: MatchCharPosition()[1] + 130
     }
     console.log(fitChar);
 
@@ -435,8 +435,8 @@ function mainCharacter() {
 
 
         let fitChar = {
-            x: MatchCharPosition()[0],
-            y: MatchCharPosition()[1] + 30
+            x: MatchCharPosition()[0] + 100,
+            y: MatchCharPosition()[1] + 130
         }
 
 
