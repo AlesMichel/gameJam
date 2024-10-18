@@ -3,6 +3,7 @@ let rows = 10;
 let matrix = [];
 let path;
 let tRange = 3;
+let money = 500;
 
 let enemy = {
     x:0,
@@ -37,6 +38,7 @@ startBtn.addEventListener('click', () => {
 });
 
 let hp = document.getElementById('health');
+document.getElementById("money").innerHTML = "Money =>" + money;
 
 
 // Initialize matrix with default values (0)
@@ -177,31 +179,43 @@ function initGrid() {
 
 
 
+let isMenuOpen = false; // Track if a menu is currently open
+
 function onClick(curr) {
     const x = curr.x;
     const y = curr.y;
+
+    // Check if a menu is already open
+    if (isMenuOpen) {
+        console.log("A menu is already open, cannot open another one.");
+        return; // Do nothing if a menu is open
+    }
+
     console.log(x, y);
     newBuilding.x = x;
     newBuilding.y = y;
+
+    // Only allow opening a menu if the tile is valid
     if (matrix[y][x] !== 'H' && matrix[y][x] !== 1 && matrix[y][x] !== 'E') {
 
-        //now show menu
+        // Set flag to indicate the menu is open
+        isMenuOpen = true;
 
-        const menu = document.createElement('div')
+        const menu = document.createElement('div');
 
         menu.innerHTML = `
-    <div class="build-menu">
-    <select id="buildOptions">
-        <option value="">Choose building</option>
-        <option value="Tower">Tower</option>
-        <option value="Trap">Trap</option>
-    </select>
-    <div class="d-flex">
-        <button id="addBtn">Add</button>
-        <button id="cancelBtn">Cancel</button>
-    </div></div>
-`;
-
+            <div class="build-menu">
+                <select id="buildOptions">
+                    <option value="">Choose building</option>
+                    <option value="Tower">Tower</option>
+                    <option value="Trap">Trap</option>
+                </select>
+                <div class="d-flex">
+                    <button id="addBtn">Add</button>
+                    <button id="cancelBtn">Cancel</button>
+                </div>
+            </div>
+        `;
 
         // Add event listeners
         const addBtn = menu.querySelector('#addBtn');
@@ -209,21 +223,20 @@ function onClick(curr) {
 
         addBtn.onclick = () => {
             placeBuilding(menu);
-            document.body.removeChild(menu);// Pass the menu to remove it later
+            document.body.removeChild(menu); // Remove the menu from the DOM
+            isMenuOpen = false; // Reset the flag when the menu is closed
         };
 
         cancelBtn.onclick = () => {
-            document.body.removeChild(menu); // Remove menu on cancel
+            document.body.removeChild(menu); // Remove the menu on cancel
+            isMenuOpen = false; // Reset the flag when the menu is closed
         };
 
-
-        document.body.appendChild(menu)
-        // matrix[x][y] = 'B1';
-        // grid.setWalkableAt(y, x, false);
-        // console.log(grid)
-        updateGrid();
+        document.body.appendChild(menu);
+        updateGrid(); // Update the grid after opening the menu
     }
 }
+
 
 function getBuildingType(){
     let buildOption = '';
@@ -236,12 +249,21 @@ function placeBuilding(){
     const option = getBuildingType();
     switch (option){
         case "Tower":
-            matrix[newBuilding.y][newBuilding.x] = 'Tower';
-            grid.setWalkableAt(newBuilding.x, newBuilding.y, false); // Ensure the grid is updated
+            if(money >= 100) {
+                money -= 100
+                matrix[newBuilding.y][newBuilding.x] = 'Tower';
+                grid.setWalkableAt(newBuilding.x, newBuilding.y, false); // Ensure the grid is updated
+            }else{
+                console.log("broke boi");
+            }
             break;
         case "Trap":
-            matrix[newBuilding.y][newBuilding.x] = 'Trap';
-            // No need to make traps unwalkable unless you want them to be impassable.
+            if(money >= 50) {
+                money -= 50
+                matrix[newBuilding.y][newBuilding.x] = 'Trap';
+            }else{
+                console.log("broke boi");
+            }
             break;
         case 0:
             break;
@@ -251,6 +273,7 @@ function placeBuilding(){
     // Recalculate the path after placing a building
     path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
     //showPath();
+    document.getElementById("money").innerHTML = "Money =>" + money; // update money
 
 }
 function generateBarriers(count, segmentCount) {
@@ -329,9 +352,13 @@ function generateBarriers(count, segmentCount) {
 
 function gameTick(){
 
+    if(enemy.x === hOrigin.x && enemy.y === hOrigin.y) {
+        return;
+    }
+
     moveEnemy();
     console.log(hp.value);
-    setTimeout(gameTick,500);
+    setTimeout(gameTick,100);
 }
 
 function dmgCheck(x,y){
