@@ -200,7 +200,8 @@ function onClick(curr) {
         const cancelBtn = menu.querySelector('#cancelBtn');
 
         addBtn.onclick = () => {
-            placeBuilding(menu); // Pass the menu to remove it later
+            placeBuilding(menu);
+            document.body.removeChild(menu);// Pass the menu to remove it later
         };
 
         cancelBtn.onclick = () => {
