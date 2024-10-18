@@ -1,6 +1,7 @@
 let cols = 10;
 let rows = 10;
 let matrix = [];
+let path;
 
 let enemy = {
     x:0,
@@ -28,6 +29,7 @@ const finder = new PF.AStarFinder();
 
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
+    path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
     startGame();
     showPath();
     updateGrid();
@@ -48,7 +50,8 @@ initHouse();
 initGrid(); // Initialize the grid
 initEnemy();
 
-let path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid); // Find the path with max steps
+
+// Find the path with max steps
 
 function initWater() {
     // Choose a random row and column
@@ -68,6 +71,7 @@ function initWater() {
         eOrigin.x = randomCol;
         eOrigin.y = 0;
     }
+    console.log(eOrigin);
 }
 
 function initHouse() {
@@ -87,13 +91,13 @@ function initHouse() {
         hOrigin.x = pos.col;
         hOrigin.y = pos.row;
     }
+    console.log(hOrigin);
 }
 
 function initEnemy(){
     enemy.x = eOrigin.x;
     enemy.y = eOrigin.y;
-    console.log(enemy.y)
-    console.log(enemy.x)
+    console.log(enemy)
     matrix[enemy.y][enemy.x] = 'E';
     updateGrid();
 }
@@ -150,8 +154,8 @@ function updateGrid() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             Tile.updateValue(i, j); // Correctly update the value of each tile
-            if (matrix[i][j] === 'B1') {
-                grid.setWalkableAt(i, j, false); // Ensure grid recognizes the barricade
+            if (matrix[i][j] === 'B1' || matrix[i][j] === 'Tow') {
+                grid.setWalkableAt(j, i, false); // Ensure grid recognizes the barricade
             }
 
         }
@@ -161,7 +165,7 @@ function updateGrid() {
 function initGrid() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            const tile = new Tile(i, j);
+            const tile = new Tile(j, i);
             tile.setValue(); // Call setValue to update the button based on matrix
         }
     }
@@ -225,23 +229,28 @@ function getBuildingType(){
 }
 
 function placeBuilding(){
-    console.log()
     const option = getBuildingType();
-    console.log(option)
     switch (option){
         case "Tower":
             matrix[newBuilding.y][newBuilding.x] = 'Tower';
-            grid.setWalkableAt(newBuilding.x, newBuilding.y,false);
+            grid.setWalkableAt(newBuilding.x, newBuilding.y, false); // Ensure the grid is updated
             break;
         case "Trap":
             matrix[newBuilding.y][newBuilding.x] = 'Trap';
+            // No need to make traps unwalkable unless you want them to be impassable.
             break;
         case 0:
             break;
     }
-    updateGrid();
-}
 
+    updateGrid(); // Update the visual grid
+    // Recalculate the path after placing a building
+    path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
+    showPath();
+    console.log(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y);
+    console.log(grid);
+    console.log(matrix);
+}
 function generateBarriers(count, segmentCount) {
     let barLeft = count;
     let barriersPerSegment = Math.floor(count / segmentCount); // Number of barriers per segment
@@ -294,6 +303,7 @@ function generateBarriers(count, segmentCount) {
                 }
             }
         }
+        updateGrid();
     }
 
     // Generate each segment
