@@ -2,6 +2,7 @@ let cols = 10;
 let rows = 10;
 let matrix = [];
 let path;
+let tRange = 3;
 
 let enemy = {
     x:0,
@@ -31,9 +32,11 @@ let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
     path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
     startGame();
-    showPath();
+    //showPath();
     updateGrid();
 });
+
+let hp = document.getElementById('health');
 
 
 // Initialize matrix with default values (0)
@@ -97,7 +100,6 @@ function initHouse() {
 function initEnemy(){
     enemy.x = eOrigin.x;
     enemy.y = eOrigin.y;
-    console.log(enemy)
     matrix[enemy.y][enemy.x] = 'E';
     updateGrid();
 }
@@ -111,19 +113,21 @@ function moveEnemy() {
     // Get the next position from the path
     let temp = path.shift();
 
+
     // Clear the enemy's current position in the matrix
     matrix[enemy.y][enemy.x] = 0;
 
     // Update the enemy's position
     enemy.x = temp[0];
     enemy.y = temp[1];
+    dmgCheck(enemy.x,enemy.y);
     matrix[enemy.y][enemy.x] = 'E'; // Update matrix to show enemy at new position
 
     // Update the grid visually
     updateGrid();
 
     // Delay before the next movement
-    setTimeout(moveEnemy, 500); // Adjust the timeout duration as needed (100 ms in this case)
+     // Adjust the timeout duration as needed (100 ms in this case)
 }
 
 function showPath() {
@@ -154,7 +158,7 @@ function updateGrid() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             Tile.updateValue(i, j); // Correctly update the value of each tile
-            if (matrix[i][j] === 'B1' || matrix[i][j] === 'Tow') {
+            if (matrix[i][j] === 'B1' || matrix[i][j] === 'Tower') {
                 grid.setWalkableAt(j, i, false); // Ensure grid recognizes the barricade
             }
 
@@ -246,10 +250,8 @@ function placeBuilding(){
     updateGrid(); // Update the visual grid
     // Recalculate the path after placing a building
     path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
-    showPath();
-    console.log(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y);
-    console.log(grid);
-    console.log(matrix);
+    //showPath();
+
 }
 function generateBarriers(count, segmentCount) {
     let barLeft = count;
@@ -325,15 +327,44 @@ function generateBarriers(count, segmentCount) {
     }
 }
 
+function gameTick(){
 
+    moveEnemy();
+    console.log(hp.value);
+    setTimeout(gameTick,500);
+}
+
+function dmgCheck(x,y){
+
+    if (matrix[y][x] === "Trap"){
+        hp.value -= 5;
+        console.log("trap triggered");
+        matrix[y][x] = 0;
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            Tile.updateValue(i, j); // Correctly update the value of each tile
+            if (matrix[i][j] === 'Tower') {
+                let d = Math.sqrt(Math.pow(j - x,2) + Math.pow(i - y,2));
+                if(d <= tRange){
+                    hp.value -= 1;
+                    console.log("tower hit");
+                }
+            }
+
+        }
+    }
+}
 
 function animate(){
-moveEnemy()
+//
 }
 
 function startGame(){
 
-        animate()
+        animate();
+    gameTick(); // nefungovalo v animate
 
         requestAnimationFrame(animate)
 }
