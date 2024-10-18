@@ -1,5 +1,8 @@
 html, body {
     margin: 0;
+    height: 100%;
+    width: 100%;
+    background-color: blueviolet;
 }
 
 #grid {
@@ -16,8 +19,8 @@ html, body {
 .gameContainer {
     margin: 0;
     padding: 0;
-    background-color: blueviolet;
-    height: 100vh;
+    height: 600px;
+    width: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,3 +34,7 @@ html, body {
     width: 300px;
 
 }
+#mainCharacter{
+
+}
+

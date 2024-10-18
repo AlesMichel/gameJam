@@ -21,7 +21,7 @@ let newBuilding = {
     x: 0,
     y: 0
 }
-
+let gameGrid = document.getElementById('grid');
 let grid = new PF.Grid(rows, cols); // Note: PF.Grid takes (width, height)
 const finder = new PF.AStarFinder();
 
@@ -200,7 +200,9 @@ function onClick(curr) {
         const cancelBtn = menu.querySelector('#cancelBtn');
 
         addBtn.onclick = () => {
-            placeBuilding(menu); // Pass the menu to remove it later
+            placeBuilding(menu);
+            document.body.removeChild(menu)
+             // Pass the menu to remove it later
         };
 
         cancelBtn.onclick = () => {
@@ -314,17 +316,146 @@ function generateBarriers(count, segmentCount) {
     }
 }
 
+function mainCharacter() {
+
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('id', 'mainCharacter');
+    canvas.width = 80; // Canvas width
+    canvas.height = 80; // Canvas height
 
 
-function animate(){
-moveEnemy()
+    gameGrid.appendChild(canvas); // Append the canvas to the body
+
+    const ctx = canvas.getContext('2d');
+
+    // Fetch the image from the assets
+    fetch('/assets/mainCharacterWalk.png')
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return res.blob();
+        })
+        .then(blob => {
+            img.src = URL.createObjectURL(blob);
+            img.onload = () => {
+                console.log('Image loaded successfully'); // Log when the image loads
+                startAnimation(); // Start animation once the image loads
+            };
+        })
+        .catch(error => {
+            console.error('Error fetching the image:', error);
+        });
+
+    const spriteWidth = 64; // Width of a single sprite frame
+    const spriteHeight = 65; // Height of a single sprite frame
+    const totalFrames = 9; // Total number of frames in the sprite sheet
+    let currentFrame = 0; // Current frame index
+    let lastFrameTime = 0; // Time of the last frame
+    const fps = 10; // Frames per second
+
+
+
+    //get position
+
+
+    function MatchCharPosition() {
+        const refEls = document.querySelectorAll('.tile-main-character');
+        if (refEls.length > 0) {
+            const lastElement = refEls[refEls.length - 1];
+
+            // Get the last element's position
+            const rect = lastElement.getBoundingClientRect();
+
+
+
+            // Calculate relative position to the parent
+            const parentRect = lastElement.parentElement.getBoundingClientRect();
+            const relativeX = rect.left - parentRect.left;
+            const relativeY = rect.top - parentRect.top;
+
+            return [relativeX, relativeY];
+
+        } else {
+            console.warn('Element tile not found');
+            return null; // Returning null to signify no position available
+        }
+    }
+
+    console.log(MatchCharPosition() + "MatchCharPos")
+
+
+
+    let fitChar = {
+        x: MatchCharPosition()[0] + 130,
+        y: MatchCharPosition()[1] + 300
+    }
+    console.log(fitChar);
+
+    canvas.style.position = 'absolute'; // Set the canvas to absolute positioning
+    canvas.style.left = `${fitChar.x}px`; // Set left position
+    canvas.style.top = `${fitChar.y}px`; // Set top position
+
+
+
+
+
+
+
+    function startAnimation(timestamp) {
+
+        if (!lastFrameTime) lastFrameTime = timestamp;
+
+        const deltaTime = timestamp - lastFrameTime;
+
+        if (deltaTime > 1000 / fps) { // Update frame timing condition
+            currentFrame = (currentFrame + 1) % totalFrames; // Loop back to the first frame
+            lastFrameTime = timestamp; // Update the last frame time
+
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+        // Draw the current frame of the sprite
+        ctx.drawImage(
+            img,
+            currentFrame * spriteWidth, // X position of the frame in the sprite sheet
+            0, // Y position of the frame in the sprite sheet (adjust if necessary)
+            spriteWidth, // Width of the frame
+            spriteHeight, // Height of the frame
+            0, // X position to draw on the canvas
+            0, // Y position to draw on the canvas
+            spriteWidth, // Width to draw on the canvas
+            spriteHeight // Height to draw on the canvas
+        );
+
+        //now move with the tile
+
+
+
+        let fitChar = {
+            x: MatchCharPosition()[0],
+            y: MatchCharPosition()[1] + 30
+        }
+
+
+        canvas.style.position = 'absolute'; // Set the canvas to absolute positioning
+        canvas.style.left = `${fitChar.x}px`; // Set left position
+        canvas.style.top = `${fitChar.y}px`; // Set top position
+
+
+
+        requestAnimationFrame(startAnimation); // Call the animation function again
+    }
 }
+mainCharacter();
+
+
+
 
 function startGame(){
-
-        animate()
-
-        requestAnimationFrame(animate)
+    moveEnemy()
 }
 
 
