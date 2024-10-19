@@ -142,12 +142,15 @@ function initLevel(){
     switch (lvl){
         case 1:
             matrix = level1;
+            money = 350;
             break;
         case 2:
             matrix = level2;
+            money = 750;
             break;
         case 3:
             matrix = level3;
+            money = 500;
             break;
     }
 
@@ -362,13 +365,21 @@ function initEnemy() {
 
 
 
-            setTimeout(gameTick, 100);
+            setTimeout(gameTick, 200);
         }
 
+
+        let lastHp = 0;
         function dmgCheck(x, y) {
 
+            if(hp.value !== 100 && hp.value%10 === 0 && lastHp !== hp.value){
+                path.unshift(path[0]);
+            }
+
+            lastHp = hp.value;
+
             if (matrix[y][x] === "Trap") {
-                hp.value -= 100;
+                hp.value -= 10;
                 console.log("trap triggered");
                 matrix[y][x] = 0;
             }
@@ -379,7 +390,7 @@ function initEnemy() {
                     if (matrix[i][j] === 'Tower') {
                         let d = Math.sqrt(Math.pow(j - x, 2) + Math.pow(i - y, 2));
                         if (d <= tRange) {
-                            hp.value -= 5;
+                            hp.value -= 2;
                             console.log("tower hit");
                         }
                     }
@@ -387,12 +398,6 @@ function initEnemy() {
                 }
             }
         }
-
-
-
-
-
-
 
 
         function animate() {
