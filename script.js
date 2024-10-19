@@ -71,6 +71,8 @@ let newBuilding = {
     y: 0
 }
 
+
+let gameGrid = document.getElementById('grid');
 let grid = new PF.Grid(rows, cols); // Note: PF.Grid takes (width, height)
 const finder = new PF.AStarFinder();
 
@@ -336,6 +338,13 @@ function initEnemy() {
             }
         }
 
+
+
+
+
+
+
+
         function animate() {
 //
         }
@@ -347,5 +356,8 @@ function initEnemy() {
 
             requestAnimationFrame(animate)
         }
+
+
+
 
 
