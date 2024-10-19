@@ -82,7 +82,10 @@ const finder = new PF.AStarFinder();
 
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
-    path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
+
+    if(gameState !== 2) {
+        path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
+    }
     if (gameState === 1) {
         gameState = 2;
     }else if(gameState === 3){
