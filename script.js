@@ -17,7 +17,7 @@ let gameState;
 
 
 let level1 = [
-    ['E',0,0,0,'B1',0,0,0,0,0],
+    ['E',0,0,0,0,0,0,0,0,0],
     [0,0,'B1',0,'B1',0,0,0,0,0],
     ['B1','B1','B1',0,'B1',0,0,0,0,0],
     [0,0,0,0,'B1',0,0,'B1',0,0],
@@ -83,20 +83,14 @@ const finder = new PF.AStarFinder();
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
     path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
-    if (gameState === 1) {
-        gameState = 2;
-    }else if(gameState === 3){
-        lvl +=1;
-        gameState = 1;
-        initLevel();
-    }
+    gameState = 2;
 
     //showPath();
     updateGrid();
 });
 
 let hp = document.getElementById('health');
-document.getElementById("money").innerHTML = "Money =>" + money;
+document.getElementById("money").innerHTML = "Money: " + money;
 
 
 startGame();
@@ -262,8 +256,8 @@ function initEnemy() {
                     <option value="Trap">Trap</option>
                 </select>
                 <div class="d-flex">
-                    <button id="addBtn">Add</button>
-                    <button id="cancelBtn">Cancel</button>
+                    <button class="btn" id="addBtn">Add</button>
+                    <button class="btn" id="cancelBtn">Cancel</button>
                 </div>
             </div>
         `;
@@ -330,7 +324,7 @@ function initEnemy() {
             // Recalculate the path after placing a building
             path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
             //showPath();
-            document.getElementById("money").innerHTML = "Money =>" + money; // update money
+            document.getElementById("money").innerHTML = "Money: " + money; // update money
 
         }
 
@@ -344,6 +338,12 @@ function initEnemy() {
                 gameState = 3;
             }
 
+            if (gameState === 3 && lvl <3) {
+                lvl +=1;
+                gameState = 1;
+                initLevel();
+                console.log()
+            }
 
             if(gameState === 2) {
                 moveEnemy();
