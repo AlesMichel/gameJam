@@ -148,8 +148,7 @@ function initLevel(){
     gameState = 1;
     resetWalkability(); // Call before finding the path
     path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
-    console.log(eOrigin)
-    console.log(hOrigin)
+
     updateGrid();
 }
 
@@ -183,7 +182,6 @@ function initEnemy() {
 
         function moveEnemy() {
             if (path.length === 0) {
-                console.log(path);
                 return;// No more path to follow
             }
 
@@ -347,8 +345,7 @@ function initEnemy() {
             if(gameState === 2) {
                 moveEnemy();
             }
-            console.log(hp.value);
-            console.log(gameState);
+
 
 
             setTimeout(gameTick, 100);
