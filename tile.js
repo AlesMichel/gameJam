@@ -20,6 +20,7 @@ class Tile {
             case 0:
                 this.button.style.backgroundColor = 'white'; // Default color
                 this.button.innerText = ''; // No text for empty
+                this.button.setAttribute('class', 'tile');
 
                 break;
             case 1:
@@ -63,6 +64,7 @@ class Tile {
                 case 0:
                     temp.style.backgroundColor = 'white'; // Default color
                     temp.innerText = ''; // No text for empty
+                    temp.setAttribute('class', 'tile');
                     break;
 
                 case 2:

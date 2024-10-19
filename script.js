@@ -86,9 +86,15 @@ startBtn.addEventListener('click', () => {
     if (gameState === 1) {
         gameState = 2;
     }else if(gameState === 3){
-        lvl +=1;
-        gameState = 1;
-        initLevel();
+        if(lvl < 3) {
+            lvl += 1;
+            gameState = 1;
+            initLevel();
+        }else {
+            gameState = 5;
+            console.log("victory");
+        }
+
     }
     //showPath();
     updateGrid();
