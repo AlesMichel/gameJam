@@ -4,6 +4,7 @@ html, body {
     height: 100%;
     width: 100%;
     background-color: black;
+    font-family: 'Press Start 2p', serif;
 }
 
 #grid {
@@ -12,13 +13,13 @@ html, body {
     position: relative;
 }
 
-#mainCharacter{
+#mainCharacter {
     position: relative;
     z-index: 20;
 }
 
 
-#grid:after{
+#grid:after {
     display: block;
     position: absolute;
     content: '';
@@ -27,14 +28,12 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 3;
-    background-image:
-            linear-gradient(rgba(78, 82, 93, 0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(78, 82, 93, 0.2) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(39, 64, 142) 2px, transparent 1px),
+    linear-gradient(90deg, rgba(19, 46, 117) 2px, transparent 1px);
     background-size: 50px 50px; /* Size matching the grid units */
     pointer-events: none;
 
 }
-
 
 
 #grid button {
@@ -45,6 +44,7 @@ html, body {
     height: 50px;
 }
 
+
 .gameContainer {
     margin: 0;
     padding: 0;
@@ -52,18 +52,194 @@ html, body {
     width: 800px;
     display: flex;
     justify-content: center;
-    background-color: blueviolet;
+    background-image: url("./assets/bg.jpg");
     align-items: center;
 }
 
-.build-menu{
+.build-menu {
     position: absolute;
     top: 50px;
     left: 50px;
-    width: 300px;
+    width: 200px;
+    height: 100px;
+    background-color: gray;
+    z-index: 30;
 
 }
-#mainCharacter{
+
+
+.tile-rock {
+    background-image: url("./assets/rock-tile.png") !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+
+.tile {
+    background-image: url("./assets/grass.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+
+
+.tile-tower {
+    background-image: url("./assets/grass.jpg") !important;
+    position: relative !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+
+.tile-tower:after{
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0;
+    display: block;
+    background-image: url(./assets/tower.png);
+    z-index: 1000;
+    width: 50px;
+    height: 100px;
+    background-size: 180%;
+    background-position-x: -19px;
+    background-repeat: no-repeat;
+}
+
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 
+#money {
+    font-size: 20px;
+    color: white;
+    margin: 0;
+}
+
+#health {
+    margin-inline: 10px;
+    max-width: 100px;
+}
+
+
+/*start btn*/
+
+.start-btn {
+    text-align: center;
+    margin: 5px;
+    font-weight: bold;
+    padding: 10px 0 10px 10px;
+    background-color: lightgray;
+    text-shadow: -1px -1px black, 1px 1px white;
+    color: gray;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    -o-border-radius: 7px;
+    border-radius: 7px;
+    box-shadow: 0 .2em gray;
+    cursor: pointer;
+    width: 150px;
+    height:50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.start-btn span{
+    font-family: 'Press Start 2p', serif;
+    font-size: 15px;
+}
+
+.start-btn:active {
+    box-shadow: none;
+    position: relative;
+    top: .2em;
+}
+
+.tile-baricade{
+    background-image: url("./assets/baricade 1.png") !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+.tile-trap{
+    background-image: url("./assets/trap.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+
+.tile-house{
+    background-image: url("./assets/house.png") !important;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px !important; /* Adjust size for zooming out */
+    background-position: 0 0 !important; /* Control the starting position of the image */
+}
+
+
+/*menuuu*/
+
+.build-menu {
+    background-color: #444; /* Dark gray background for the menu */
+    border: 2px solid #888; /* Light gray border */
+    border-radius: 5px; /* Slightly rounded corners */
+    padding: 10px; /* Padding for inner spacing */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    width: 200px; /* Fixed width */
+    margin: 20px auto; /* Center the menu on the page */
+    z-index: 1000;
+}
+
+#buildOptions {
+    width: 100%; /* Full width select */
+    padding: 5px; /* Padding for better touch */
+    background-color: #666; /* Medium gray for select background */
+    color: #fff; /* White text color */
+    border: 1px solid #888; /* Border to match the menu */
+    border-radius: 3px; /* Slightly rounded corners */
+    font-family: inherit; /* Inherit font style */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#buildOptions option {
+    background-color: #666; /* Match the select background */
+    color: #fff; /* White text color */
+}
+
+.d-flex {
+    display: flex; /* Flexbox for buttons */
+    justify-content: space-between; /* Space out buttons */
+    margin-top: 10px; /* Space above buttons */
+}
+
+.btn {
+    background-color: #888; /* Button background color */
+    color: #222; /* Dark text color for contrast */
+    border: 1px solid #bbb; /* Light gray border */
+    border-radius: 3px; /* Rounded corners */
+    padding: 5px 10px; /* Padding for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-family: inherit; /* Inherit font style */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.add-btn:hover {
+    background-color: #999; /* Lighter gray on hover */
+    color: #000; /* Darker text color on hover */
+}
+
+.cancel-btn:hover {
+    background-color: #999; /* Lighter gray on hover */
+    color: #000; /* Darker text color on hover */
+}
+
+.add-btn:active,
+.cancel-btn:active {
+    background-color: #777; /* Darker gray on active */
+    color: #fff; /* White text color on active */
+}
