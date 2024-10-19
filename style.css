@@ -183,7 +183,17 @@ html, body {
 
 
 /*menuuu*/
-
+.build-menu-ov{
+    position: absolute;
+    background-color: #444; /* Dark gray background for the menu */
+    border: 2px solid #888; /* Light gray border */
+    border-radius: 5px; /* Slightly rounded corners */
+    padding: 10px; /* Padding for inner spacing */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    width: 200px; /* Fixed width */
+    margin: 20px auto; /* Center the menu on the page */
+    z-index: 1000;
+}
 .build-menu {
     background-color: #444; /* Dark gray background for the menu */
     border: 2px solid #888; /* Light gray border */

@@ -239,6 +239,9 @@ function initEnemy() {
         let isMenuOpen = false; // Track if a menu is currently open
 
         function onClick(curr) {
+            const mX = event.clientX; // X coordinate
+            const mY = event.clientY; // Y coordinate
+
             const x = curr.x;
             const y = curr.y;
 
@@ -259,9 +262,11 @@ function initEnemy() {
                 isMenuOpen = true;
 
                 const menu = document.createElement('div');
-
+                menu.classList.add('build-menu-ov');
+                menu.style.top = `${mY}px`;
+                menu.style.left = `${mX}px`;
                 menu.innerHTML = `
-            <div class="build-menu">
+            <div style= class="build-menu">
                 <select id="buildOptions">
                     <option value="">Choose building</option>
                     <option value="Tower">Tower</option>
