@@ -280,6 +280,12 @@ function initEnemy() {
                         money -= 100
                         matrix[newBuilding.y][newBuilding.x] = 'Tower';
                         grid.setWalkableAt(newBuilding.x, newBuilding.y, false); // Ensure the grid is updated
+                        if(finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone()).length === 0){
+                            console.log("placement blocks path");
+                            money += 100
+                            matrix[newBuilding.y][newBuilding.x] = '0';
+                            grid.setWalkableAt(newBuilding.x, newBuilding.y, true);
+                        }
                     } else {
                         console.log("broke boi");
                     }
