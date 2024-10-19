@@ -13,7 +13,7 @@ function mainCharacter() {
     const ctx = canvas.getContext('2d');
 
     // Fetch the image from the assets
-    fetch('/assets/mainCharacterWalk.png')
+    fetch('assets/mainCharacterWalk.png')
         .then(res => {
             if (!res.ok) {
                 throw new Error('Network response was not ok');
