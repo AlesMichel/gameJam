@@ -5,35 +5,58 @@ let path;
 let tRange = 3;
 let money = 500;
 let lvl = 1;
-
+let isTakingDmg = false;
 let gameState = 0;
 const gameContainer = document.getElementById('gameCon')
 if(gameState === 0){
-    buildTitleScreen()
+    buildTitleScreen('welcome')
 }
 
-function buildTitleScreen(){
-    console.log(gameState)
-    const titleOv = document.createElement('div')
-    titleOv.classList.add('titleOv')
+function buildTitleScreen(string) {
+    console.log(gameState);
+    const titleOv = document.createElement('div');
+    titleOv.classList.add('titleOv');
+
+    // Set up the title overlay with the escaped string directly in HTML
     titleOv.innerHTML = `
         <div>
-            
+            <p id="pText">${string}</p> <!-- Insert the string directly -->
             <button class="start-btn" id="continueButton"><span>Continue...</span></button>
         </div>
     `;
-    gameContainer.appendChild(titleOv)
+
+    gameContainer.appendChild(titleOv); // Append the overlay to the game container
+
+    // Define the event handler function separately
+    const handleContinueClick = () => {
+        console.log('click');
+        titleOv.remove();
+        // Unsubscribe the event listener after the button is clicked
+        continueButton.removeEventListener('click', handleContinueClick);
+    };
 
     // Add an event listener to the button
     const continueButton = document.getElementById('continueButton');
-    continueButton.addEventListener('click', function() {
-        // Remove the title overlay
-        titleOv.remove();
 
-        // Optionally, call a function to start the game or load the next screen
-        console.log('Continue button clicked! Starting the game...');
-        // startGame(); // Uncomment this line if you have a startGame function
-    });
+    // Unsubscribe any previous event listener (if any)
+    continueButton.removeEventListener('click', handleContinueClick);
+
+    // Subscribe to the event
+    continueButton.addEventListener('click', handleContinueClick);
+}
+
+
+function buildGameOverScreen(string) {
+    console.log(gameState);
+    const titleOv = document.createElement('div');
+    titleOv.classList.add('titleOv');
+    // Set up the title overlay with the escaped string directly in HTML
+    titleOv.innerHTML = `
+        <div>
+            <p id="pText">${string}</p> <!-- Insert the string directly -->
+        </div>
+    `;
+    gameContainer.appendChild(titleOv); // Append the overlay to the game container
 }
 
 //0 welcome
@@ -83,13 +106,13 @@ let level3 =[
 
 
 let enemy = {
-    x:0,
-    y:0
+    x:1,
+    y:1
 }
 
 let eOrigin = {
-    x: 0,
-    y: 0
+    x: 1,
+    y: 1
 };
 
 let hOrigin = {
@@ -182,7 +205,7 @@ function initLevel(){
             break;
     }
 
-
+    document.getElementById("money").innerHTML = "Money: " + money;
     initHouse();
     initEnemy();// Initialize the grid
     gameState = 1;
@@ -390,8 +413,18 @@ function initEnemy() {
             }
 
 
-
+            if(gameState === 4){
+                buildGameOverScreen('Game Over!')
+            }else if(gameState === 3){
+                if(lvl === 3){
+                    gameState = 5;
+                    console.log("victory");
+                }
+        }
+            console.log(gameState)
             setTimeout(gameTick, 200);
+
+
         }
 
 
@@ -408,6 +441,10 @@ function initEnemy() {
                 hp.value -= 10;
                 console.log("trap triggered");
                 matrix[y][x] = 0;
+                isTakingDmg = true;
+
+            } else {
+                isTakingDmg = false;
             }
 
             for (let i = 0; i < rows; i++) {
@@ -418,6 +455,12 @@ function initEnemy() {
                         if (d <= tRange) {
                             hp.value -= 2;
                             console.log("tower hit");
+
+                            //tower hit animation
+                            isTakingDmg = true;
+
+                        } else{
+                            isTakingDmg = false;
                         }
                     }
 
