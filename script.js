@@ -433,6 +433,7 @@ function initEnemy() {
                 if(lvl === 3){
                     gameState = 5;
                     console.log("victory");
+                    buildGameVictory();
                 }
         }
             console.log(gameState)
