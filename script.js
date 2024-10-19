@@ -6,7 +6,35 @@ let tRange = 3;
 let money = 500;
 let lvl = 1;
 
-let gameState;
+let gameState = 0;
+const gameContainer = document.getElementById('gameCon')
+if(gameState === 0){
+    buildTitleScreen()
+}
+
+function buildTitleScreen(){
+    console.log(gameState)
+    const titleOv = document.createElement('div')
+    titleOv.classList.add('titleOv')
+    titleOv.innerHTML = `
+        <div>
+            
+            <button class="start-btn" id="continueButton"><span>Continue...</span></button>
+        </div>
+    `;
+    gameContainer.appendChild(titleOv)
+
+    // Add an event listener to the button
+    const continueButton = document.getElementById('continueButton');
+    continueButton.addEventListener('click', function() {
+        // Remove the title overlay
+        titleOv.remove();
+
+        // Optionally, call a function to start the game or load the next screen
+        console.log('Continue button clicked! Starting the game...');
+        // startGame(); // Uncomment this line if you have a startGame function
+    });
+}
 
 //0 welcome
 //1 build
@@ -269,30 +297,29 @@ function initEnemy() {
                 menu.style.top = `${mY}px`;
                 menu.style.left = `${mX}px`;
                 menu.innerHTML = `
-            <div style= class="build-menu">
-                <select id="buildOptions">
-                    <option value="">Choose building</option>
-                    <option value="Tower">Tower</option>
-                    <option value="Trap">Trap</option>
-                </select>
-                <div class="d-flex">
-                    <button class="btn" id="addBtn">Add</button>
-                    <button class="btn" id="cancelBtn">Cancel</button>
+                <div style= class="build-menu">                      
+                    <button class="trap" id="trapPick"> </button>
+                    <button class="tower" id="towerPick"> </button>
+                    <button class="btn" id="cancelBtn"></button>
                 </div>
-            </div>
         `;
 
                 // Add event listeners
-                const addBtn = menu.querySelector('#addBtn');
-                const cancelBtn = menu.querySelector('#cancelBtn');
-
-                addBtn.onclick = () => {
-                    placeBuilding(menu);
+                const trapPick = menu.querySelector('#trapPick');
+                const towerPick = menu.querySelector('#towerPick');
+                const cancelBtn = menu.querySelector('#cancelBtn')
+                cancelBtn.onclick = () => {
+                    document.body.removeChild(menu); // Remove the menu from the DOM
+                    isMenuOpen = false; // Reset the flag when the menu is closed
+                }
+                trapPick.onclick = () => {
+                    placeBuilding('Trap');
                     document.body.removeChild(menu); // Remove the menu from the DOM
                     isMenuOpen = false; // Reset the flag when the menu is closed
                 };
 
-                cancelBtn.onclick = () => {
+                towerPick.onclick = () => {
+                    placeBuilding('Tower');
                     document.body.removeChild(menu); // Remove the menu on cancel
                     isMenuOpen = false; // Reset the flag when the menu is closed
                 };
@@ -310,9 +337,8 @@ function initEnemy() {
             return buildOption;
         }
 
-        function placeBuilding() {
-            const option = getBuildingType();
-            switch (option) {
+        function placeBuilding(type) {
+            switch (type) {
                 case "Tower":
                     if (money >= 100) {
                         money -= 100
