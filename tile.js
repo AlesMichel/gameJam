@@ -20,7 +20,6 @@ class Tile {
             case 0:
                 this.button.style.backgroundColor = 'white'; // Default color
                 this.button.innerText = ''; // No text for empty
-
                 break;
             case 1:
                 this.button.style.backgroundColor = 'blue'; // Water
@@ -31,20 +30,24 @@ class Tile {
                 this.button.innerText = 'P'; // Optional label
                 break;
             case 'H':
-                this.button.setAttribute('class', 'tile-house tile');
+                this.button.style.backgroundColor = 'red'; // House
+                this.button.innerText = 'H'; // Label for house
                 break;
             case 'B1':
-                this.button.setAttribute('class', 'tile-baricade');
+                this.button.style.backgroundColor = 'brown'; // Barricade
+                this.button.innerText = 'B1'; // Label for barricade
                 break;
             case 'E':
-                this.button.setAttribute('class', 'tile-main-character tile-rock');
+                this.button.style.backgroundColor = 'brown'; // Default color
+                this.button.innerText = 'E'; // No text for empty
                 break;
             case 'Tower':
-                this.button.setAttribute('class', 'tile-tower');
+                this.button.style.backgroundColor = 'red'
+                this.button.innerText = 'Tow'
                 break;
             case 'Trap':
-                this.button.setAttribute('class', 'tile-trap');
-
+                this.button.style.backgroundColor = 'yellow'
+                this.button.innerText = 'Trp'
         }
     }
 
@@ -58,7 +61,9 @@ class Tile {
         if (temp) {
             switch (matrix[y][x]) {
                 case 'E':
-                    temp.setAttribute('class', 'tile-main-character tile-rock');
+                    temp.style.backgroundColor = 'purple'; // Default color
+                    temp.innerText = 'E'; // No text for empty
+                    temp.setAttribute('class', 'tile-main-character');
                     break;
                 case 0:
                     temp.style.backgroundColor = 'white'; // Default color
@@ -70,16 +75,20 @@ class Tile {
                     temp.innerText = 'P'; // Optional label
                     break;
                 case 'B1':
-                    temp.setAttribute('class', 'tile-baricade');
+                    temp.style.backgroundColor = 'brown'; // Barricade
+                    temp.innerText = 'B1'; // Label for barricade
                     break;
                 case 'H':
-                    temp.setAttribute('class', 'tile-house');
+                    temp.style.backgroundColor = 'red'; // House
+                    temp.innerText = 'H'; // Label for house
                     break;
                 case 'Tower':
-                    temp.setAttribute('class', 'tile-tower');
+                    temp.style.backgroundColor = 'red'
+                    temp.innerText = 'Tow'
                     break;
                 case 'Trap':
-                    temp.setAttribute('class', 'tile-trap');
+                    temp.style.backgroundColor = 'yellow'
+                    temp.innerText = 'Trp'
             }
         }
     }
