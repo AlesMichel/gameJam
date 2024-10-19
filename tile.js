@@ -63,7 +63,6 @@ class Tile {
                 case 'E':
                     temp.style.backgroundColor = 'purple'; // Default color
                     temp.innerText = 'E'; // No text for empty
-                    temp.setAttribute('class', 'tile-main-character');
                     break;
                 case 0:
                     temp.style.backgroundColor = 'white'; // Default color

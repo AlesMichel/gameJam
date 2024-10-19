@@ -1,6 +1,9 @@
 let cols = 10;
 let rows = 10;
 let matrix = [];
+let path;
+let tRange = 3;
+let money = 500;
 
 let enemy = {
     x:0,
@@ -21,17 +24,21 @@ let newBuilding = {
     x: 0,
     y: 0
 }
-let gameGrid = document.getElementById('grid');
+
 let grid = new PF.Grid(rows, cols); // Note: PF.Grid takes (width, height)
 const finder = new PF.AStarFinder();
 
 
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
+    path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
     startGame();
-    showPath();
+    //showPath();
     updateGrid();
 });
+
+let hp = document.getElementById('health');
+document.getElementById("money").innerHTML = "Money =>" + money;
 
 
 // Initialize matrix with default values (0)
@@ -48,7 +55,8 @@ initHouse();
 initGrid(); // Initialize the grid
 initEnemy();
 
-let path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid); // Find the path with max steps
+
+// Find the path with max steps
 
 function initWater() {
     // Choose a random row and column
@@ -68,6 +76,7 @@ function initWater() {
         eOrigin.x = randomCol;
         eOrigin.y = 0;
     }
+    console.log(eOrigin);
 }
 
 function initHouse() {
@@ -87,13 +96,12 @@ function initHouse() {
         hOrigin.x = pos.col;
         hOrigin.y = pos.row;
     }
+    console.log(hOrigin);
 }
 
 function initEnemy(){
     enemy.x = eOrigin.x;
     enemy.y = eOrigin.y;
-    console.log(enemy.y)
-    console.log(enemy.x)
     matrix[enemy.y][enemy.x] = 'E';
     updateGrid();
 }
@@ -107,19 +115,21 @@ function moveEnemy() {
     // Get the next position from the path
     let temp = path.shift();
 
+
     // Clear the enemy's current position in the matrix
     matrix[enemy.y][enemy.x] = 0;
 
     // Update the enemy's position
     enemy.x = temp[0];
     enemy.y = temp[1];
+    dmgCheck(enemy.x,enemy.y);
     matrix[enemy.y][enemy.x] = 'E'; // Update matrix to show enemy at new position
 
     // Update the grid visually
     updateGrid();
 
     // Delay before the next movement
-    setTimeout(moveEnemy, 500); // Adjust the timeout duration as needed (100 ms in this case)
+     // Adjust the timeout duration as needed (100 ms in this case)
 }
 
 function showPath() {
@@ -150,8 +160,8 @@ function updateGrid() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             Tile.updateValue(i, j); // Correctly update the value of each tile
-            if (matrix[i][j] === 'B1') {
-                grid.setWalkableAt(i, j, false); // Ensure grid recognizes the barricade
+            if (matrix[i][j] === 'B1' || matrix[i][j] === 'Tower') {
+                grid.setWalkableAt(j, i, false); // Ensure grid recognizes the barricade
             }
 
         }
@@ -161,7 +171,7 @@ function updateGrid() {
 function initGrid() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            const tile = new Tile(i, j);
+            const tile = new Tile(j, i);
             tile.setValue(); // Call setValue to update the button based on matrix
         }
     }
@@ -169,31 +179,43 @@ function initGrid() {
 
 
 
+let isMenuOpen = false; // Track if a menu is currently open
+
 function onClick(curr) {
     const x = curr.x;
     const y = curr.y;
+
+    // Check if a menu is already open
+    if (isMenuOpen) {
+        console.log("A menu is already open, cannot open another one.");
+        return; // Do nothing if a menu is open
+    }
+
     console.log(x, y);
     newBuilding.x = x;
     newBuilding.y = y;
+
+    // Only allow opening a menu if the tile is valid
     if (matrix[y][x] !== 'H' && matrix[y][x] !== 1 && matrix[y][x] !== 'E') {
 
-        //now show menu
+        // Set flag to indicate the menu is open
+        isMenuOpen = true;
 
-        const menu = document.createElement('div')
+        const menu = document.createElement('div');
 
         menu.innerHTML = `
-    <div class="build-menu">
-    <select id="buildOptions">
-        <option value="">Choose building</option>
-        <option value="Tower">Tower</option>
-        <option value="Trap">Trap</option>
-    </select>
-    <div class="d-flex">
-        <button id="addBtn">Add</button>
-        <button id="cancelBtn">Cancel</button>
-    </div></div>
-`;
-
+            <div class="build-menu">
+                <select id="buildOptions">
+                    <option value="">Choose building</option>
+                    <option value="Tower">Tower</option>
+                    <option value="Trap">Trap</option>
+                </select>
+                <div class="d-flex">
+                    <button id="addBtn">Add</button>
+                    <button id="cancelBtn">Cancel</button>
+                </div>
+            </div>
+        `;
 
         // Add event listeners
         const addBtn = menu.querySelector('#addBtn');
@@ -201,22 +223,20 @@ function onClick(curr) {
 
         addBtn.onclick = () => {
             placeBuilding(menu);
-            document.body.removeChild(menu)
-             // Pass the menu to remove it later
+            document.body.removeChild(menu); // Remove the menu from the DOM
+            isMenuOpen = false; // Reset the flag when the menu is closed
         };
 
         cancelBtn.onclick = () => {
-            document.body.removeChild(menu); // Remove menu on cancel
+            document.body.removeChild(menu); // Remove the menu on cancel
+            isMenuOpen = false; // Reset the flag when the menu is closed
         };
 
-
-        document.body.appendChild(menu)
-        // matrix[x][y] = 'B1';
-        // grid.setWalkableAt(y, x, false);
-        // console.log(grid)
-        updateGrid();
+        document.body.appendChild(menu);
+        updateGrid(); // Update the grid after opening the menu
     }
 }
+
 
 function getBuildingType(){
     let buildOption = '';
@@ -226,23 +246,36 @@ function getBuildingType(){
 }
 
 function placeBuilding(){
-    console.log()
     const option = getBuildingType();
-    console.log(option)
     switch (option){
         case "Tower":
-            matrix[newBuilding.y][newBuilding.x] = 'Tower';
-            grid.setWalkableAt(newBuilding.x, newBuilding.y,false);
+            if(money >= 100) {
+                money -= 100
+                matrix[newBuilding.y][newBuilding.x] = 'Tower';
+                grid.setWalkableAt(newBuilding.x, newBuilding.y, false); // Ensure the grid is updated
+            }else{
+                console.log("broke boi");
+            }
             break;
         case "Trap":
-            matrix[newBuilding.y][newBuilding.x] = 'Trap';
+            if(money >= 50) {
+                money -= 50
+                matrix[newBuilding.y][newBuilding.x] = 'Trap';
+            }else{
+                console.log("broke boi");
+            }
             break;
         case 0:
             break;
     }
-    updateGrid();
-}
 
+    updateGrid(); // Update the visual grid
+    // Recalculate the path after placing a building
+    path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
+    //showPath();
+    document.getElementById("money").innerHTML = "Money =>" + money; // update money
+
+}
 function generateBarriers(count, segmentCount) {
     let barLeft = count;
     let barriersPerSegment = Math.floor(count / segmentCount); // Number of barriers per segment
@@ -295,6 +328,7 @@ function generateBarriers(count, segmentCount) {
                 }
             }
         }
+        updateGrid();
     }
 
     // Generate each segment
@@ -316,146 +350,50 @@ function generateBarriers(count, segmentCount) {
     }
 }
 
-function mainCharacter() {
+function gameTick(){
 
-    const img = new Image();
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('id', 'mainCharacter');
-    canvas.width = 80; // Canvas width
-    canvas.height = 80; // Canvas height
+    if(enemy.x === hOrigin.x && enemy.y === hOrigin.y) {
+        return;
+    }
 
+    moveEnemy();
+    console.log(hp.value);
+    setTimeout(gameTick,100);
+}
 
-    gameGrid.appendChild(canvas); // Append the canvas to the body
+function dmgCheck(x,y){
 
-    const ctx = canvas.getContext('2d');
+    if (matrix[y][x] === "Trap"){
+        hp.value -= 5;
+        console.log("trap triggered");
+        matrix[y][x] = 0;
+    }
 
-    // Fetch the image from the assets
-    fetch('/assets/mainCharacterWalk.png')
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            Tile.updateValue(i, j); // Correctly update the value of each tile
+            if (matrix[i][j] === 'Tower') {
+                let d = Math.sqrt(Math.pow(j - x,2) + Math.pow(i - y,2));
+                if(d <= tRange){
+                    hp.value -= 1;
+                    console.log("tower hit");
+                }
             }
-            return res.blob();
-        })
-        .then(blob => {
-            img.src = URL.createObjectURL(blob);
-            img.onload = () => {
-                console.log('Image loaded successfully'); // Log when the image loads
-                startAnimation(); // Start animation once the image loads
-            };
-        })
-        .catch(error => {
-            console.error('Error fetching the image:', error);
-        });
-
-    const spriteWidth = 64; // Width of a single sprite frame
-    const spriteHeight = 65; // Height of a single sprite frame
-    const totalFrames = 9; // Total number of frames in the sprite sheet
-    let currentFrame = 0; // Current frame index
-    let lastFrameTime = 0; // Time of the last frame
-    const fps = 10; // Frames per second
-
-
-
-    //get position
-
-
-    function MatchCharPosition() {
-        const refEls = document.querySelectorAll('.tile-main-character');
-        if (refEls.length > 0) {
-            const lastElement = refEls[refEls.length - 1];
-
-            // Get the last element's position
-            const rect = lastElement.getBoundingClientRect();
-
-
-
-            // Calculate relative position to the parent
-            const parentRect = lastElement.parentElement.getBoundingClientRect();
-            const relativeX = rect.left - parentRect.left;
-            const relativeY = rect.top - parentRect.top;
-
-            return [relativeX, relativeY];
-
-        } else {
-            console.warn('Element tile not found');
-            return null; // Returning null to signify no position available
-        }
-    }
-
-    console.log(MatchCharPosition() + "MatchCharPos")
-
-
-
-    let fitChar = {
-        x: MatchCharPosition()[0] + 100,
-        y: MatchCharPosition()[1] + 130
-    }
-    console.log(fitChar);
-
-    canvas.style.position = 'absolute'; // Set the canvas to absolute positioning
-    canvas.style.left = `${fitChar.x}px`; // Set left position
-    canvas.style.top = `${fitChar.y}px`; // Set top position
-
-
-
-
-
-
-
-    function startAnimation(timestamp) {
-
-        if (!lastFrameTime) lastFrameTime = timestamp;
-
-        const deltaTime = timestamp - lastFrameTime;
-
-        if (deltaTime > 1000 / fps) { // Update frame timing condition
-            currentFrame = (currentFrame + 1) % totalFrames; // Loop back to the first frame
-            lastFrameTime = timestamp; // Update the last frame time
 
         }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-
-        // Draw the current frame of the sprite
-        ctx.drawImage(
-            img,
-            currentFrame * spriteWidth, // X position of the frame in the sprite sheet
-            0, // Y position of the frame in the sprite sheet (adjust if necessary)
-            spriteWidth, // Width of the frame
-            spriteHeight, // Height of the frame
-            0, // X position to draw on the canvas
-            0, // Y position to draw on the canvas
-            spriteWidth, // Width to draw on the canvas
-            spriteHeight // Height to draw on the canvas
-        );
-
-        //now move with the tile
-
-
-
-        let fitChar = {
-            x: MatchCharPosition()[0] + 100,
-            y: MatchCharPosition()[1] + 130
-        }
-
-
-        canvas.style.position = 'absolute'; // Set the canvas to absolute positioning
-        canvas.style.left = `${fitChar.x}px`; // Set left position
-        canvas.style.top = `${fitChar.y}px`; // Set top position
-
-
-
-        requestAnimationFrame(startAnimation); // Call the animation function again
     }
 }
-mainCharacter();
 
-
-
+function animate(){
+//
+}
 
 function startGame(){
-    moveEnemy()
+
+        animate();
+    gameTick(); // nefungovalo v animate
+
+        requestAnimationFrame(animate)
 }
 
 
