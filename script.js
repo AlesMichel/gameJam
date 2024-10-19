@@ -4,13 +4,16 @@ let matrix = [];
 let path;
 let tRange = 3;
 let money = 500;
+let lvl = 1;
 
 let gameState;
 
-//1 welcome
+//0 welcome
+//1 build
 //2 game
-//3 win
+//3 next lvl
 //4 loss
+//5 win
 
 
 let level1 = [
@@ -80,13 +83,17 @@ const finder = new PF.AStarFinder();
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
     path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
-    startGame();
+    gameState = 2;
+
     //showPath();
     updateGrid();
 });
 
 let hp = document.getElementById('health');
 document.getElementById("money").innerHTML = "Money =>" + money;
+
+
+startGame();
 
 
 // Initialize matrix with default values (0)
@@ -97,14 +104,49 @@ for (let i = 0; i < rows; i++) {
     }
 }
 
-matrix = level3;
-initHouse();
-
-initEnemy();
-initGrid(); // Initialize the grid
-
+initLevel();
+initGrid();
 updateGrid();
 
+
+function resetWalkability() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (matrix[i][j] === 'B1' || matrix[i][j] === 'Tower') {
+                grid.setWalkableAt(j, i, false);
+            } else {
+                grid.setWalkableAt(j, i, true);
+            }
+        }
+    }
+}
+
+
+
+function initLevel(){
+   hp.value = 100;
+    switch (lvl){
+        case 1:
+            matrix = level1;
+            break;
+        case 2:
+            matrix = level2;
+            break;
+        case 3:
+            matrix = level3;
+            break;
+    }
+
+
+    initHouse();
+    initEnemy();// Initialize the grid
+    gameState = 1;
+    resetWalkability(); // Call before finding the path
+    path = finder.findPath(eOrigin.x, eOrigin.y, hOrigin.x, hOrigin.y, grid.clone());
+    console.log(eOrigin)
+    console.log(hOrigin)
+    updateGrid();
+}
 
 function initEnemy() {
     for (let i = 0; i < rows; i++) {
@@ -158,30 +200,6 @@ function initEnemy() {
 
             // Delay before the next movement
             // Adjust the timeout duration as needed (100 ms in this case)
-        }
-
-        function showPath() {
-
-            console.log(path);
-
-            // Clear previous paths if necessary
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    if (matrix[i][j] === 2) {
-                        matrix[i][j] = 0; // Reset path value in matrix
-                    }
-                }
-            }
-
-            // Mark new path in the matrix
-            if (path) {
-                for (let i = 0; i < path.length; i++) {
-                    if (matrix[path[i][1]][path[i][0]] !== 'H' && matrix[path[i][1]][path[i][0]] !== 1) {
-                        matrix[path[i][1]][path[i][0]] = 2; // Set path value in matrix
-                    }
-                }
-            }
-            updateGrid(); // Ensure grid is updated after marking the path
         }
 
         function updateGrid() {
@@ -313,18 +331,34 @@ function initEnemy() {
         function gameTick() {
 
             if (enemy.x === hOrigin.x && enemy.y === hOrigin.y) {
-                return;
+                gameState = 4;
             }
 
-            moveEnemy();
+            if (hp.value === 0){
+                gameState = 3;
+            }
+
+            if (gameState === 3 && lvl <3) {
+                lvl +=1;
+                gameState = 1;
+                initLevel();
+                console.log()
+            }
+
+            if(gameState === 2) {
+                moveEnemy();
+            }
             console.log(hp.value);
+            console.log(gameState);
+
+
             setTimeout(gameTick, 100);
         }
 
         function dmgCheck(x, y) {
 
             if (matrix[y][x] === "Trap") {
-                hp.value -= 5;
+                hp.value -= 100;
                 console.log("trap triggered");
                 matrix[y][x] = 0;
             }
@@ -335,7 +369,7 @@ function initEnemy() {
                     if (matrix[i][j] === 'Tower') {
                         let d = Math.sqrt(Math.pow(j - x, 2) + Math.pow(i - y, 2));
                         if (d <= tRange) {
-                            hp.value -= 1;
+                            hp.value -= 5;
                             console.log("tower hit");
                         }
                     }
