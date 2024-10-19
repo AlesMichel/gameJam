@@ -186,7 +186,7 @@ progress[value]::-moz-progress-bar {
 #continueButton{
     height: 50px !important;
     width: 200px !important;
-    margin-bottom: 150px;
+    margin-top: 150px;
 }
 #continueButton span{
     margin-top: 5px;
@@ -228,6 +228,53 @@ body{
     left: 0;
     background-color: white;
     background-image: url("./assets/bg.jpg");
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.titleOvOver{
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    background-image: url("./assets/bg.jpg");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    font-size: 38px;
+}
+
+.titleOvVictory{
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    background-image: url("./assets/bg.jpg");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 38px;
+}
+
+.titleOv1{
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    background-image: url("./assets/bgWtitle.png");
+    background-size: cover;
     display: flex;
     justify-content: center;
     align-items: end;

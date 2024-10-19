@@ -9,13 +9,13 @@ let isTakingDmg = false;
 let gameState = 0;
 const gameContainer = document.getElementById('gameCon')
 if(gameState === 0){
-    buildTitleScreen('welcome')
+    buildTitleScreen('')
 }
 
 function buildTitleScreen(string) {
     console.log(gameState);
     const titleOv = document.createElement('div');
-    titleOv.classList.add('titleOv');
+    titleOv.classList.add('titleOv1');
 
     // Set up the title overlay with the escaped string directly in HTML
     titleOv.innerHTML = `
@@ -49,11 +49,24 @@ function buildTitleScreen(string) {
 function buildGameOverScreen(string) {
     console.log(gameState);
     const titleOv = document.createElement('div');
-    titleOv.classList.add('titleOv');
+    titleOv.classList.add('titleOvOver');
     // Set up the title overlay with the escaped string directly in HTML
     titleOv.innerHTML = `
         <div>
             <p id="pText">${string}</p> <!-- Insert the string directly -->
+        </div>
+    `;
+    gameContainer.appendChild(titleOv); // Append the overlay to the game container
+}
+
+function buildGameVictory() {
+    console.log(gameState);
+    const titleOv = document.createElement('div');
+    titleOv.classList.add('titleOvVictory');
+    // Set up the title overlay with the escaped string directly in HTML
+    titleOv.innerHTML = `
+        <div>
+            <p id="pText">Victory!</p> <!-- Insert the string directly -->
         </div>
     `;
     gameContainer.appendChild(titleOv); // Append the overlay to the game container
@@ -415,6 +428,7 @@ function initEnemy() {
 
             if(gameState === 4){
                 buildGameOverScreen('Game Over!')
+                gameState = -7;
             }else if(gameState === 3){
                 if(lvl === 3){
                     gameState = 5;
