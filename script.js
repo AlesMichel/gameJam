@@ -83,8 +83,13 @@ const finder = new PF.AStarFinder();
 let startBtn = document.getElementById('startGame');
 startBtn.addEventListener('click', () => {
     path = finder.findPath(eOrigin.x,eOrigin.y,hOrigin.x,hOrigin.y,grid.clone());
-    gameState = 2;
-
+    if (gameState === 1) {
+        gameState = 2;
+    }else if(gameState === 3){
+        lvl +=1;
+        gameState = 1;
+        initLevel();
+    }
     //showPath();
     updateGrid();
 });
@@ -338,12 +343,6 @@ function initEnemy() {
                 gameState = 3;
             }
 
-            if (gameState === 3 && lvl <3) {
-                lvl +=1;
-                gameState = 1;
-                initLevel();
-                console.log()
-            }
 
             if(gameState === 2) {
                 moveEnemy();
